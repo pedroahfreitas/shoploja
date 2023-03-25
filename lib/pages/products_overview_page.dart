@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopp/components/app_drawer.dart';
+import 'package:shopp/components/product_grid.dart';
 import 'package:shopp/models/cart.dart';
 import 'package:shopp/models/product_list.dart';
 import 'package:shopp/utils/app_routes.dart';
-
-import '../components/product_grid.dart';
 
 enum FilterOptions {
   favorite,

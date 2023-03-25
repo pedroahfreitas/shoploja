@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:shopp/components/auth_form.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({Key? key}) : super(key: key);
@@ -30,7 +29,6 @@ class AuthPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  margin: const EdgeInsets.only(bottom: 20),
                   padding: const EdgeInsets.symmetric(
                     vertical: 10,
                     horizontal: 70,
@@ -56,8 +54,7 @@ class AuthPage extends StatelessWidget {
                       color: Colors.white,
                     ),
                   ),
-                ),
-                AuthForm(),
+                )
               ],
             ),
           ),
@@ -66,3 +63,16 @@ class AuthPage extends StatelessWidget {
     );
   }
 }
+
+// Exemplo usado para explicar o cascade operator
+// void main() {
+//   List<int> a = [1, 2, 3];
+//   a.add(4);
+//   a.add(5);
+//   a.add(6);
+
+//   // cascade operator!
+//   a..add(7)..add(8)..add(9);
+
+//   print(a);
+// }

@@ -1,5 +1,3 @@
-import 'package:shopp/pages/auth_page.dart';
-
 class AppRoutes {
   static const auth = '/';
   static const home = '/home';
