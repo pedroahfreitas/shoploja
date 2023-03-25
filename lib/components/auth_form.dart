@@ -1,11 +1,12 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
+import 'package:provider/provider.dart';
+import 'package:shopp/models/auth.dart';
 
-enum AuthMode { Singup, login }
+enum AuthMode { signup, login }
 
 class AuthForm extends StatefulWidget {
-  const AuthForm({super.key});
+  const AuthForm({Key? key}) : super(key: key);
 
   @override
   State<AuthForm> createState() => _AuthFormState();
@@ -13,29 +14,29 @@ class AuthForm extends StatefulWidget {
 
 class _AuthFormState extends State<AuthForm> {
   final _passwordController = TextEditingController();
-  final _formkey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   AuthMode _authMode = AuthMode.login;
-  Map<String, String> _authData = {
+  final Map<String, String> _authData = {
     'email': '',
     'password': '',
   };
 
   bool _isLogin() => _authMode == AuthMode.login;
-  bool _isSignup() => _authMode == AuthMode.Singup;
+  bool _isSignup() => _authMode == AuthMode.signup;
 
   void _switchAuthMode() {
     setState(() {
       if (_isLogin()) {
-        _authMode = AuthMode.Singup;
+        _authMode = AuthMode.signup;
       } else {
         _authMode = AuthMode.login;
       }
     });
   }
 
-  void _submit() {
-    final isValid = _formkey.currentState?.validate() ?? false;
+  Future<void> _submit() async {
+    final isValid = _formKey.currentState?.validate() ?? false;
 
     if (!isValid) {
       return;
@@ -43,12 +44,17 @@ class _AuthFormState extends State<AuthForm> {
 
     setState(() => _isLoading = true);
 
-    _formkey.currentState?.save();
+    _formKey.currentState?.save();
+    Auth auth = Provider.of(context, listen: false);
 
     if (_isLogin()) {
-      //Login
+      // Login
     } else {
-      //Registrar
+      // Registrar
+      await auth.signup(
+        _authData['email']!,
+        _authData['password']!,
+      );
     }
 
     setState(() => _isLoading = false);
@@ -63,42 +69,43 @@ class _AuthFormState extends State<AuthForm> {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Container(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         height: _isLogin() ? 310 : 400,
         width: deviceSize.width * 0.75,
         child: Form(
-          key: _formkey,
+          key: _formKey,
           child: Column(
             children: [
               TextFormField(
-                decoration: InputDecoration(labelText: 'Email'),
+                decoration: const InputDecoration(labelText: 'E-mail'),
                 keyboardType: TextInputType.emailAddress,
                 onSaved: (email) => _authData['email'] = email ?? '',
                 validator: (_email) {
                   final email = _email ?? '';
-                  if (email.trim().isEmpty || email.contains('@')) {
+                  if (email.trim().isEmpty || !email.contains('@')) {
                     return 'Informe um e-mail válido.';
                   }
                   return null;
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Senha'),
+                decoration: const InputDecoration(labelText: 'Senha'),
                 keyboardType: TextInputType.emailAddress,
                 obscureText: true,
                 controller: _passwordController,
                 onSaved: (password) => _authData['password'] = password ?? '',
                 validator: (_password) {
                   final password = _password ?? '';
-                  if (password.isEmpty || password.length < 6) {
-                    return 'Informe uma senha válida.';
+                  if (password.isEmpty || password.length < 5) {
+                    return 'Informe uma senha válida';
                   }
                   return null;
                 },
               ),
               if (_isSignup())
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Confirmar Senha'),
+                  decoration:
+                      const InputDecoration(labelText: 'Confirmar Senha'),
                   keyboardType: TextInputType.emailAddress,
                   obscureText: true,
                   validator: _isLogin()
@@ -111,15 +118,12 @@ class _AuthFormState extends State<AuthForm> {
                           return null;
                         },
                 ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               if (_isLoading)
-                CircularProgressIndicator()
+                const CircularProgressIndicator()
               else
                 ElevatedButton(
                   onPressed: _submit,
-                  child: Text(
-                    _authMode == AuthMode.login ? 'ENTRAR' : 'REGISTRAR',
-                  ),
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
@@ -129,8 +133,11 @@ class _AuthFormState extends State<AuthForm> {
                       vertical: 8,
                     ),
                   ),
+                  child: Text(
+                    _authMode == AuthMode.login ? 'ENTRAR' : 'REGISTRAR',
+                  ),
                 ),
-              Spacer(),
+              const Spacer(),
               TextButton(
                 onPressed: _switchAuthMode,
                 child: Text(
